@@ -37,3 +37,47 @@ conda activate vanguard_env
 
 # Install dependencies
 pip install -r requirements.txt
+
+3. Model Weights
+Due to GitHub's file size limits, the pre-trained weights (best_mintime_model.pth) for the VANGUARD architecture are hosted externally.
+
+Download the pre-trained model: [https://drive.google.com/drive/folders/1YTGa8jSYx28fRkJCD4AiSM-StPZCYQyC?usp=sharing]
+
+Place the downloaded .pth file in the following directory:
+models/checkpoints/best_mintime_model.pth
+
+Ensure the YuNet face detection weights are present in weights/face_detection_yunet_2023mar.onnx (included in repo).
+
+4. Pipeline Execution
+A. Data Preprocessing
+To extract temporally coherent 5-frame face sequences from raw .mp4 files:
+
+Bash
+python scripts/extract_faces.py --input_dir path/to/videos --output_dir dataset_lake/extracted_faces
+python scripts/build_tensor_dataset.py
+B. Training
+To train the model from scratch using the label-smoothed focal loss:
+
+Bash
+python scripts/train.py --batch_size 24 --epochs 100 --lr 1e-4
+C. Evaluation
+To run inference and generate AUC/ACC metrics on your test splits:
+
+Bash
+python scripts/evaluate.py --checkpoint models/checkpoints/best_mintime_model.pth
+5. Replicating Publication Figures
+The scripts provided allow for exact replication of the representation learning manifolds and spatial attention distributions discussed in Section IV of the manuscript.
+
+Generating Spatial Cross-Attention Maps (Figure 4)
+This script performs a white-box extraction of the pre-dropout Softmax probabilities from the final Asymmetric Cross-Attention block (Head 4) to visualize spatial blending boundary localization.
+
+Bash
+python scripts/attention_visualizer.py --video_path test_fake_1.mp4 --out Figure_4_Attention.png
+Generating Latent Feature Manifolds (Figure 5)
+This script explicitly extracts the 384-dimensional latent embeddings preceding the final classification layer, applies L2-normalization, and projects the feature space using optimized t-SNE and UMAP.
+
+
+
+
+
+***
