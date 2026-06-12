@@ -37,48 +37,126 @@ conda activate vanguard_env
 # Install dependencies
 pip install -r requirements.txt
 
-## 3. Model Weights
-Due to GitHub's file size limits, the pre-trained weights (best_mintime_model.pth) for the VANGUARD architecture are hosted externally.
+## 📦 Pre-trained Model Weights
 
-Download the pre-trained model: [https://drive.google.com/drive/folders/1YTGa8jSYx28fRkJCD4AiSM-StPZCYQyC?usp=sharing]
+Due to GitHub's file size limitations, the pre-trained VANGUARD model weights (`best_mintime_model.pth`) are hosted externally.
 
-Place the downloaded .pth file in the following directory:
+### Download
+
+📥 **Pre-trained Weights:**
+
+https://drive.google.com/drive/folders/1YTGa8jSYx28fRkJCD4AiSM-StPZCYQyC?usp=sharing
+
+### Installation
+
+After downloading, place the checkpoint file in:
+
+```text
 models/checkpoints/best_mintime_model.pth
+```
 
-Ensure the YuNet face detection weights are present in weights/face_detection_yunet_2023mar.onnx (included in repo).
+### Additional Requirements
 
-## 4. Pipeline Execution
-A. Data Preprocessing
-To extract temporally coherent 5-frame face sequences from raw .mp4 files:
+Ensure the YuNet face detection model is available at:
 
-python scripts/extract_faces.py --input_dir path/to/videos --output_dir dataset_lake/extracted_faces
+```text
+weights/face_detection_yunet_2023mar.onnx
+```
+
+> **Note:** The YuNet weights are already included in this repository.
+
+---
+
+# 🚀 Pipeline Execution
+
+## A. Data Preprocessing
+
+Extract temporally coherent 5-frame face sequences from raw video files (`.mp4`):
+
+### Step 1: Face Extraction
+
+```bash
+python scripts/extract_faces.py \
+    --input_dir path/to/videos \
+    --output_dir dataset_lake/extracted_faces
+```
+
+### Step 2: Build Tensor Dataset
+
+```bash
 python scripts/build_tensor_dataset.py
-B. Training
-To train the model from scratch using the label-smoothed focal loss:
+```
 
+---
 
-python scripts/train.py --batch_size 24 --epochs 100 --lr 1e-4
-C. Evaluation
-To run inference and generate AUC/ACC metrics on your test splits:
+## B. Training
 
+Train the VANGUARD model from scratch using Label-Smoothed Focal Loss:
 
-python scripts/evaluate.py --checkpoint models/checkpoints/best_mintime_model.pth
-## 5. Replicating Publication Figures
-The scripts provided allow for exact replication of the representation learning manifolds and spatial attention distributions discussed in Section IV of the manuscript.
+```bash
+python scripts/train.py \
+    --batch_size 24 \
+    --epochs 100 \
+    --lr 1e-4
+```
 
-Generating Spatial Cross-Attention Maps (Figure 4)
-This script performs a white-box extraction of the pre-dropout Softmax probabilities from the final Asymmetric Cross-Attention block (Head 4) to visualize spatial blending boundary localization.
+---
 
-python scripts/attention_visualizer.py --video_path test_fake_1.mp4 --out Figure_4_Attention.png
-Generating Latent Feature Manifolds (Figure 5)
-This script explicitly extracts the 384-dimensional latent embeddings preceding the final classification layer, applies L2-normalization, and projects the feature space using optimized t-SNE and UMAP.
+## C. Evaluation
 
+Run inference and generate evaluation metrics (AUC, Accuracy):
+
+```bash
+python scripts/evaluate.py \
+    --checkpoint models/checkpoints/best_mintime_model.pth
+```
+
+---
+
+# 📊 Reproducing Publication Figures
+
+The provided scripts allow exact replication of the representation learning manifolds and spatial attention visualizations presented in **Section IV** of the manuscript.
+
+---
+
+## Figure 4 — Spatial Cross-Attention Maps
+
+Generate spatial attention visualizations from the final Asymmetric Cross-Attention block (**Head 4**).
+
+This script extracts pre-dropout Softmax probabilities to visualize spatial blending boundary localization.
+
+```bash
+python scripts/attention_visualizer.py \
+    --video_path test_fake_1.mp4 \
+    --out Figure_4_Attention.png
+```
+
+### Output
+
+```text
+Figure_4_Attention.png
+```
+
+---
+
+## Figure 5 — Latent Feature Manifolds
+
+Extract the 384-dimensional latent embeddings prior to classification, perform L2 normalization, and project the feature space using:
+
+* t-SNE
+* UMAP
+
+```bash
 python tsne_feature_space.py
+```
 
-## 6. Citation
-If you find this code or our methodology useful in your research, please cite our paper:
+---
 
-Code snippet
+# 📖 Citation
+
+If you find this repository useful in your research, please consider citing our work:
+
+```bibtex
 @article{saini2026vanguard,
   title={VANGUARD: ViT-Based Video Attention Network for Generalized Unseen Artifact Recognition in Deepfakes},
   author={Saini, Aashish Kumar and Upadhyay, Govind Murari},
@@ -86,10 +164,13 @@ Code snippet
   year={2026},
   publisher={Springer Nature}
 }
-7. License
-This project is licensed under the MIT License. See the LICENSE file for details.
+```
 
+---
 
-***
+# 📄 License
 
-***
+This project is licensed under the **MIT License**.
+
+See the `LICENSE` file for complete details.
+
