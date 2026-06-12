@@ -1,0 +1,16 @@
+{
+    "timestamp": "20260512_051624",
+    "total_videos_analyzed": 6553,
+    "applied_threshold": 0.8804848194122314,
+    "roc_auc": 0.9170553621247886,
+    "overall_accuracy": 0.7750648557912406,
+    "f1_score": 0.7842505854800936,
+    "precision": 0.910295616717635,
+    "recall": 0.6888660323990743,
+    "confusion_matrix": {
+        "TN": 2400,
+        "FP": 264,
+        "FN": 1210,
+        "TP": 2679
+    }
+}
